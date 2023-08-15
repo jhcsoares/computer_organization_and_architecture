@@ -1,0 +1,17 @@
+Fixação
+Quais das instruções abaixo existem e quais não existem no RISC-V, segundo este PDF? Considere
+que dif_zero e nao_chegou são apenas labels para outras instruções.
+1. add  s5,zero,zero        T
+2. addi s5,zero,s0          F
+3. bne  s5,33,nao_chegou    F
+4. bne  s5,s2,nao_chegou    T
+5. add  s5,s5,1             F
+6. add  s5,zero,-14         F
+7. add  s5,0,-14            F
+8. addi s5,s5,1             T
+9. bne  s5,s2,nao_chegou    T
+10. addi s5,zero,-14        T
+11. add  s5,3,s3            F
+12. bne  s5,0,dif_zero      F
+13. add  s5,zero,0          F
+14. bne  s5,zero,s0         F
