@@ -7,7 +7,7 @@ entity alu is
         operand_a, operand_b: in unsigned(15 downto 0);
         op_selector: in unsigned(1 downto 0);
         result: out unsigned(15 downto 0);
-        is_result_zero, is_a_bigger_than_b, is_result_negative, is_result_even: out std_logic
+        is_result_zero, is_a_bigger_than_b, is_result_negative, is_result_even, overflow: out std_logic
     );
 end entity;
 
@@ -27,6 +27,9 @@ architecture behavioral of alu is
     signal subtraction: unsigned(15 downto 0);
     signal and_signal: unsigned(15 downto 0);
     signal or_signal: unsigned(15 downto 0);
+    signal overflow_sum: unsigned(16 downto 0);
+    signal overflow_subtraction: unsigned(16 downto 0);
+    signal overflow_signal: unsigned(16 downto 0);
     signal result_signal: unsigned(15 downto 0);
 
 begin          
@@ -34,6 +37,8 @@ begin
     subtraction<=operand_a-operand_b;
     and_signal<=operand_a and operand_b;
     or_signal<=operand_a or operand_b;
+    overflow_sum<=('0' & operand_a) + ('0' & operand_b);
+    overflow_subtraction<=('0' & operand_a) - ('0' & operand_b);
 
     uut1: mux4x1 port map(
         op_selector,
@@ -46,7 +51,7 @@ begin
     
     result<=result_signal;
 
-    is_result_zero  <=  '1' when    operand_a-operand_b="0000000000000000"    else
+    is_result_zero  <=  '1' when    result_signal="0000000000000000"    else
                         '0' when    result_signal/="0000000000000"   else
                         '0';
     
@@ -58,5 +63,13 @@ begin
 
     is_result_even      <=  '0' when    result_signal(0)='1'   else
                             '1' when    result_signal(0)='0'   else
+                            '0';
+    
+    overflow_signal     <=  overflow_sum    when    op_selector="00"    else
+                            overflow_subtraction    when    op_selector="01"    else
+                            "00000000000000000";
+    
+    overflow            <=  '1' when    overflow_signal>="10000000000000000"    else
+                            '0' when    overflow_signal<"10000000000000000"    else
                             '0';
 end architecture;
