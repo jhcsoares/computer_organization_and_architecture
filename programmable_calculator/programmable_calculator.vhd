@@ -54,7 +54,8 @@ architecture behavioral of programmable_calculator is
             alu_wr_reg: out std_logic;
             alu_src_b: out std_logic;
             alu_op: out unsigned(1 downto 0);
-            mem_rd: out std_logic
+            mem_rd: out std_logic;
+            jump_reg_wr_en: out std_logic
         );
     end component;
 
@@ -100,6 +101,16 @@ architecture behavioral of programmable_calculator is
         );
     end component;
 
+    component jump_data_reg 
+        port(
+            rst: in std_logic;
+            wr_en: in std_logic;
+            clk: in std_logic;
+            data_in: in std_logic;
+            data_out: out std_logic
+        );
+    end component;
+
     signal mem_rd_s: std_logic;
     signal data_out_pc_s: unsigned(6 downto 0);
     signal pc_wr_s: std_logic;
@@ -122,6 +133,8 @@ architecture behavioral of programmable_calculator is
     signal imm_extended: unsigned(15 downto 0);
     signal imm_signal: std_logic;
     signal state_s: unsigned(1 downto 0);
+    signal jump_reg_wr_en_s: std_logic;
+    signal jump_reg_out_s: std_logic;
 
 begin
     rom0: rom port map(
@@ -160,7 +173,8 @@ begin
         alu_wr_reg=>alu_wr_reg_s,
         alu_src_b=>alu_src_b_s,
         alu_op=>alu_op_s,
-        mem_rd=>mem_rd_s
+        mem_rd=>mem_rd_s,
+        jump_reg_wr_en=>jump_reg_wr_en_s
     );
 
     registers_bank0: registers_bank port map(
@@ -183,19 +197,30 @@ begin
         result=>alu_result_s
     );
 
-    alu_reg0: alu_reg port map(
-        rst=>rst,
-        alu_result=>alu_result_s,
-        clk=>clk,
-        wr_en=>alu_wr_reg_s,
-        data=>alu_result_reg_out_s
-    );
+    -- alu_reg0: alu_reg port map(
+    --     rst=>rst,
+    --     alu_result=>alu_result_s,
+    --     clk=>clk,
+    --     wr_en=>alu_wr_reg_s,
+    --     data=>alu_result_reg_out_s
+    -- );
 
     states_machine0: states_machine port map(
         rst=>rst,
         clk=>clk,
         state=>state_s
     );
+
+    jump_data_reg0: jump_data_reg port map(
+        rst=>rst,
+        wr_en=>jump_reg_wr_en_s,
+        clk=>clk,
+        data_in=>jump_en_s,
+        data_out=>jump_reg_out_s
+    );
+
+    pc_wr_s<='1' when (state_s="00" and jump_reg_out_s='0') or (state_s="11" and jump_en_s='1') else
+             '0';
 
     data_in_pc_s<=data_out_pc_s+1 when jump_en_s='0' else
                   read_register_1_data_s(6 downto 0);

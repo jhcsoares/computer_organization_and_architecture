@@ -15,7 +15,8 @@ entity control_unity is
         alu_wr_reg: out std_logic;
         alu_src_b: out std_logic;
         alu_op: out unsigned(1 downto 0);
-        mem_rd: out std_logic
+        mem_rd: out std_logic;
+        jump_reg_wr_en: out std_logic
     );
 end entity;
 
@@ -28,8 +29,8 @@ begin
 
     --main control signals
 
-    pc_wr<='1' when (state="00") else
-           '0';
+    -- pc_wr<='1' when (state="00" and jump_en_s='0') or jump_en_s='1' else
+    --        '0';
 
     mem_rd<='1' when state="01" else
             '0';
@@ -41,6 +42,9 @@ begin
     
     jump_en_s<='1' when opcode="0011" and state="11" else
                '0';
+
+    jump_reg_wr_en<='1' when state="11" else
+                    '0';
             
     jump_en<=jump_en_s;
     
