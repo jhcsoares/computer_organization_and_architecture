@@ -7,12 +7,12 @@ entity control_unity is
         state: in unsigned(1 downto 0);
         clk: in std_logic;
         instruction: in unsigned(15 downto 0);
-        pc_wr: out std_logic;
+        --pc_wr: out std_logic;
         jump_en: out std_logic;
         reg_rd: out std_logic;
         reg_wr: out std_logic;
         inst_wr: out std_logic;
-        alu_wr_reg: out std_logic;
+        --alu_wr_reg: out std_logic;
         alu_src_b: out std_logic;
         alu_op: out unsigned(1 downto 0);
         mem_rd: out std_logic;
@@ -58,8 +58,8 @@ begin
     reg_rd<='1' when state="11" else
             '0';
         
-    alu_wr_reg<='1' when state="10" else
-                '0';
+    -- alu_wr_reg<='1' when state="10" else
+    --             '0';
 
     alu_src_b<='0' when (opcode="0001" and state="11") or 
                         (opcode="0101" and state="11") else

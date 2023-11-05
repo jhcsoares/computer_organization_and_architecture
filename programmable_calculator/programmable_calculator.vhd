@@ -46,12 +46,12 @@ architecture behavioral of programmable_calculator is
             state: in unsigned(1 downto 0);
             clk: in std_logic;
             instruction: in unsigned(15 downto 0);
-            pc_wr: out std_logic;
+            --pc_wr: out std_logic;
             jump_en: out std_logic;
             reg_rd: out std_logic;
             reg_wr: out std_logic;
             inst_wr: out std_logic;
-            alu_wr_reg: out std_logic;
+            --alu_wr_reg: out std_logic;
             alu_src_b: out std_logic;
             alu_op: out unsigned(1 downto 0);
             mem_rd: out std_logic;
@@ -125,7 +125,7 @@ architecture behavioral of programmable_calculator is
     signal alu_src_b_s: std_logic;
     signal operand_b_s: unsigned(15 downto 0);
     signal alu_op_s: unsigned(1 downto 0);
-    signal alu_wr_reg_s: std_logic;
+    --signal alu_wr_reg_s: std_logic;
     signal alu_result_reg_out_s: unsigned(15 downto 0);
     signal read_register_1_data_s: unsigned(15 downto 0);
     signal read_register_2_data_s: unsigned(15 downto 0);
@@ -165,12 +165,11 @@ begin
         state=>state_s,
         clk=>clk,
         instruction=>instruction,
-        pc_wr=>pc_wr_s,
         jump_en=>jump_en_s,
         reg_rd=>reg_rd_s,
         reg_wr=>reg_wr_s,
         inst_wr=>inst_wr_s,
-        alu_wr_reg=>alu_wr_reg_s,
+        --alu_wr_reg=>alu_wr_reg_s,
         alu_src_b=>alu_src_b_s,
         alu_op=>alu_op_s,
         mem_rd=>mem_rd_s,
@@ -201,7 +200,7 @@ begin
     --     rst=>rst,
     --     alu_result=>alu_result_s,
     --     clk=>clk,
-    --     wr_en=>alu_wr_reg_s,
+    --     wr_en=>--alu_wr_reg_s,
     --     data=>alu_result_reg_out_s
     -- );
 
