@@ -13,7 +13,6 @@ architecture behavioral of programmable_calculator is
 
     component rom 
         port(
-            --rst: in std_logic;
             rd_en: in std_logic;
             clk: in std_logic;
             address: in unsigned(6 downto 0);
@@ -33,7 +32,6 @@ architecture behavioral of programmable_calculator is
 
     component instruction_register 
         port(
-            --rst: in std_logic;
             clk: in std_logic;
             instruction: in unsigned(15 downto 0);
             inst_wr: in std_logic;
@@ -46,12 +44,10 @@ architecture behavioral of programmable_calculator is
             state: in unsigned(1 downto 0);
             clk: in std_logic;
             instruction: in unsigned(15 downto 0);
-            --pc_wr: out std_logic;
             jump_en: out std_logic;
             reg_rd: out std_logic;
             reg_wr: out std_logic;
             inst_wr: out std_logic;
-            --alu_wr_reg: out std_logic;
             alu_src_b: out std_logic;
             alu_op: out unsigned(1 downto 0);
             mem_rd: out std_logic;
@@ -275,8 +271,8 @@ begin
     blt<=is_negative_reg_out xor overflow_reg_out;
 
     pc_wr_s<='1' when (state_s="00" and jump_reg_out_s='0' and blt_reg_out='0') or 
-                      (state_s="11" and jump_en_s='1')      or
-                      (state_s="11" and blt_reg_out='1')            else
+                      (state_s="11" and jump_en_s='1')                          or
+                      (state_s="11" and blt_reg_out='1')                        else
              '0';
 
     blt_address_1<=data_out_pc_s+instruction(5 downto 1);
