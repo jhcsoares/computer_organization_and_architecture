@@ -282,7 +282,7 @@ begin
                  blt_address_2;
 
     data_in_pc_s<=blt_address when jump_en_s='0' and blt_reg_out='1' else
-                  data_out_pc_s+1 when jump_en_s='0' else
+                  --data_out_pc_s+1 when jump_en_s='0' else
                   read_register_1_data_s(6 downto 0) when jump_en_s='1' else
                   data_out_pc_s+1;
 

@@ -45,7 +45,7 @@ begin
     overflow_signal_and<=('0' & operand_a) and ('0' & operand_b);
     overflow_signal_or<=('0' & operand_a) or ('0' & operand_b);
 
-    uut1: mux4x1 port map(
+    mux4x1_0: mux4x1 port map(
         op_selector,
         sum,
         subtraction,
