@@ -51,7 +51,8 @@ architecture behavioral of programmable_calculator is
             alu_src_b: out std_logic;
             alu_op: out unsigned(1 downto 0);
             mem_rd: out std_logic;
-            jump_reg_wr_en: out std_logic
+            jump_reg_wr_en: out std_logic;
+            flags_wr_en: out std_logic
         );
     end component;
 
@@ -110,7 +111,7 @@ architecture behavioral of programmable_calculator is
     component is_negative_register 
         port(
             rst: in std_logic;
-            state: in unsigned(1 downto 0);
+            wr_en: in std_logic;
             clk: in std_logic;
             data_in: in std_logic;
             data_out: out std_logic
@@ -120,7 +121,7 @@ architecture behavioral of programmable_calculator is
     component overflow_register
         port(
             rst: in std_logic;
-            state: in unsigned(1 downto 0);
+            wr_en: in std_logic;
             clk: in std_logic;
             data_in: in std_logic;
             data_out: out std_logic
@@ -166,10 +167,9 @@ architecture behavioral of programmable_calculator is
     signal is_negative_reg_out: std_logic;
     signal overflow_reg_out: std_logic;
     signal blt: std_logic;
-    signal blt_address_1: unsigned(6 downto 0);
-    signal blt_address_2: unsigned(6 downto 0);
     signal blt_address: unsigned(6 downto 0);
     signal blt_reg_out: std_logic;
+    signal flags_wr_en_s: std_logic;
 
 begin
     rom0: rom port map(
@@ -205,7 +205,8 @@ begin
         alu_src_b=>alu_src_b_s,
         alu_op=>alu_op_s,
         mem_rd=>mem_rd_s,
-        jump_reg_wr_en=>jump_reg_wr_en_s
+        jump_reg_wr_en=>jump_reg_wr_en_s,
+        flags_wr_en=>flags_wr_en_s
     );
 
     registers_bank0: registers_bank port map(
@@ -246,19 +247,19 @@ begin
 
     is_negative_register0: is_negative_register port map(
         rst=>rst,
-        state=>state_s,
+        wr_en=>flags_wr_en_s,
         clk=>clk,
         data_in=>is_negative_s,
         data_out=>is_negative_reg_out
-        );
+    );
 
     overflow_register0: overflow_register port map(
         rst=>rst,
-        state=>state_s,
+        wr_en=>flags_wr_en_s,
         clk=>clk,
         data_in=>overflow_s,
         data_out=>overflow_reg_out
-        );
+    );
 
     blt_register0: blt_register port map(
             rst=>rst,
@@ -266,7 +267,7 @@ begin
             clk=>clk,
             data_in=>blt,
             data_out=>blt_reg_out
-        );
+    );
 
     blt<=is_negative_reg_out xor overflow_reg_out;
 
@@ -275,11 +276,7 @@ begin
                       (state_s="11" and blt_reg_out='1')                        else
              '0';
 
-    blt_address_1<=data_out_pc_s+instruction(5 downto 1);
-    blt_address_2<=data_out_pc_s-instruction(5 downto 1);
-
-    blt_address<=blt_address_1 when instruction(0)='1' else
-                 blt_address_2;
+    blt_address<=data_out_pc_s+instruction(6 downto 0);
 
     data_in_pc_s<=blt_address when jump_en_s='0' and blt_reg_out='1' else
                   --data_out_pc_s+1 when jump_en_s='0' else

@@ -14,7 +14,8 @@ entity control_unity is
         alu_src_b: out std_logic;
         alu_op: out unsigned(1 downto 0);
         mem_rd: out std_logic;
-        jump_reg_wr_en: out std_logic
+        jump_reg_wr_en: out std_logic;
+        flags_wr_en: out std_logic
     );
 end entity;
 
@@ -61,6 +62,12 @@ begin
             "01" when (opcode="0100" and state="11") or 
                       (opcode="0110" and state="11") else
             "00";
+
+    flags_wr_en<='1' when opcode="0001" or
+                          opcode="0010" or
+                          opcode="0100" or
+                          opcode="0110" else
+                 '0';
 
 end architecture;
 
