@@ -53,7 +53,8 @@ architecture behavioral of programmable_calculator is
             mem_rd: out std_logic;
             jump_reg_wr_en: out std_logic;
             flags_wr_en: out std_logic;
-            ram_wr_en: out std_logic
+            ram_wr_en: out std_logic;
+            reg_wr_data_selector: out std_logic
         );
     end component;
 
@@ -185,6 +186,7 @@ architecture behavioral of programmable_calculator is
     signal ram_data_out_s: unsigned(15 downto 0);
     signal reg_write_data_s: unsigned(15 downto 0);
     signal ram_address_s: unsigned(6 downto 0);
+    signal reg_wr_data_selector_s: std_logic;
 
 begin
     rom0: rom port map(
@@ -222,7 +224,8 @@ begin
         mem_rd=>mem_rd_s,
         jump_reg_wr_en=>jump_reg_wr_en_s,
         flags_wr_en=>flags_wr_en_s,
-        ram_wr_en=>ram_wr_en_s
+        ram_wr_en=>ram_wr_en_s,
+        reg_wr_data_selector=>reg_wr_data_selector_s
     );
 
     registers_bank0: registers_bank port map(
@@ -318,7 +321,7 @@ begin
     operand_b_s<=imm_extended when alu_src_b_s='0' else
                  read_register_2_data_s;
 
-    reg_write_data_s<=ram_data_out_s when ram_wr_en_s='1' else
+    reg_write_data_s<=ram_data_out_s when reg_wr_data_selector_s='1' else
                       alu_result_s;
 
     ram_address_s<=read_register_1_data_s(6 downto 0)+(instruction(5) & instruction(5 downto 0));

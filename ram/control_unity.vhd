@@ -16,7 +16,8 @@ entity control_unity is
         mem_rd: out std_logic;
         jump_reg_wr_en: out std_logic;
         flags_wr_en: out std_logic;
-        ram_wr_en: out std_logic
+        ram_wr_en: out std_logic;
+        reg_wr_data_selector: out std_logic
     );
 end entity;
 
@@ -73,5 +74,8 @@ begin
 
     ram_wr_en<='1' when (opcode="0111" and state="11") else
                '0'; 
+
+    reg_wr_data_selector<='1' when (opcode="1000" and state="11") else
+                          '0';
 end architecture;
 
