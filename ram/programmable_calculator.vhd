@@ -52,7 +52,8 @@ architecture behavioral of programmable_calculator is
             alu_op: out unsigned(1 downto 0);
             mem_rd: out std_logic;
             jump_reg_wr_en: out std_logic;
-            flags_wr_en: out std_logic
+            flags_wr_en: out std_logic;
+            ram_wr_en: out std_logic
         );
     end component;
 
@@ -138,6 +139,16 @@ architecture behavioral of programmable_calculator is
         );
     end component;
 
+    component ram 
+        port( 
+            clk      : in std_logic;
+            address  : in unsigned(6 downto 0);
+            wr_en    : in std_logic;
+            data_in  : in unsigned(15 downto 0);
+            data_out : out unsigned(15 downto 0) 
+        );
+     end component;
+
     signal mem_rd_s: std_logic;
     signal data_out_pc_s: unsigned(6 downto 0);
     signal pc_wr_s: std_logic;
@@ -170,6 +181,10 @@ architecture behavioral of programmable_calculator is
     signal blt_address: unsigned(6 downto 0);
     signal blt_reg_out: std_logic;
     signal flags_wr_en_s: std_logic;
+    signal ram_wr_en_s: std_logic;    
+    signal ram_data_out_s: unsigned(15 downto 0);
+    signal reg_write_data_s: unsigned(15 downto 0);
+    signal ram_address_s: unsigned(6 downto 0);
 
 begin
     rom0: rom port map(
@@ -206,7 +221,8 @@ begin
         alu_op=>alu_op_s,
         mem_rd=>mem_rd_s,
         jump_reg_wr_en=>jump_reg_wr_en_s,
-        flags_wr_en=>flags_wr_en_s
+        flags_wr_en=>flags_wr_en_s,
+        ram_wr_en=>ram_wr_en_s
     );
 
     registers_bank0: registers_bank port map(
@@ -214,7 +230,7 @@ begin
         read_register_1=>instruction(11 downto 9),
         read_register_2=>instruction(8 downto 6),
         reg_write_address=>instruction(8 downto 6),
-        reg_write_data=>alu_result_s,
+        reg_write_data=>reg_write_data_s,
         write_enable=>reg_wr_s,
         clk=>clk,
         rst=>rst,
@@ -268,6 +284,14 @@ begin
             data_in=>blt,
             data_out=>blt_reg_out
     );
+    
+    ram0: ram port map(
+        clk=>clk,      
+        address=>ram_address_s, 
+        wr_en=>ram_wr_en_s,    
+        data_in=>read_register_2_data_s, 
+        data_out=>ram_data_out_s 
+    );
 
     blt<=is_negative_reg_out xor overflow_reg_out;
 
@@ -293,5 +317,10 @@ begin
 
     operand_b_s<=imm_extended when alu_src_b_s='0' else
                  read_register_2_data_s;
+
+    reg_write_data_s<=ram_data_out_s when ram_wr_en_s='1' else
+                      alu_result_s;
+
+    ram_address_s<=read_register_1_data_s(6 downto 0)+(instruction(5) & instruction(5 downto 0));
         
 end architecture;

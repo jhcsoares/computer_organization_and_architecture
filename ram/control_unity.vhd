@@ -15,7 +15,8 @@ entity control_unity is
         alu_op: out unsigned(1 downto 0);
         mem_rd: out std_logic;
         jump_reg_wr_en: out std_logic;
-        flags_wr_en: out std_logic
+        flags_wr_en: out std_logic;
+        ram_wr_en: out std_logic
     );
 end entity;
 
@@ -46,7 +47,8 @@ begin
     
     reg_wr<='1' when (opcode="0001" and state="11") or 
                      (opcode="0010" and state="11") or       
-                     (opcode="0110" and state="11") else
+                     (opcode="0110" and state="11") or
+                     (opcode="1000" and state="11") else
             '0';
 
     reg_rd<='1' when state="11" else
@@ -69,5 +71,7 @@ begin
                           opcode="0110" else
                  '0';
 
+    ram_wr_en<='1' when (opcode="0111" and state="11") else
+               '0'; 
 end architecture;
 
