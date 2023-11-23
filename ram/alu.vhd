@@ -63,7 +63,8 @@ begin
     overflow <= '1' when overflow_signal="10000000000000000" else
                 '0';
                             
-    is_result_negative <= result_signal(15);
+    is_result_negative <= overflow_signal_subtraction(16) when op_selector="01" else
+                          '0';
 
     result<=result_signal;
 end architecture;

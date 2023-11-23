@@ -313,7 +313,7 @@ begin
     data_in_pc_main<=data_in_pc_s when rst='0' else
                      "0000000";
 
-    imm_signal<=instruction(5);
+    imm_signal<='0';--instruction(5);
     imm_extended<=imm_signal&imm_signal&imm_signal&imm_signal&imm_signal&
                   imm_signal&imm_signal&imm_signal&imm_signal&imm_signal&
                   instruction(5 downto 0);
