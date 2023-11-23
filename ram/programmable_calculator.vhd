@@ -5,7 +5,8 @@ use ieee.numeric_std.all;
 entity programmable_calculator is
     port(
         rst: in std_logic;
-        clk: in std_logic
+        clk: in std_logic;
+        prime_numbers: out unsigned(15 downto 0)
     );
 end entity;
 
@@ -187,6 +188,7 @@ architecture behavioral of programmable_calculator is
     signal reg_write_data_s: unsigned(15 downto 0);
     signal ram_address_s: unsigned(6 downto 0);
     signal reg_wr_data_selector_s: std_logic;
+    signal prime_numbers_s: unsigned(15 downto 0);
 
 begin
     rom0: rom port map(
@@ -325,5 +327,9 @@ begin
                       alu_result_s;
 
     ram_address_s<=read_register_1_data_s(6 downto 0)+(instruction(5) & instruction(5 downto 0));
-        
+    
+    prime_numbers_s<=ram_data_out_s when (data_out_pc_s="0010101" and state_s="11") else
+                     "0000000000000000";
+
+    prime_numbers<=prime_numbers_s;
 end architecture;

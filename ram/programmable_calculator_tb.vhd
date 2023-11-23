@@ -9,7 +9,8 @@ architecture tb of programmable_calculator_tb is
     component programmable_calculator 
         port(
             rst: in std_logic;
-            clk: in std_logic
+            clk: in std_logic;
+            prime_numbers: out unsigned(15 downto 0)
         );
     end component;
 
